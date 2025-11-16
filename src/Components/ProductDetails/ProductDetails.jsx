@@ -1,12 +1,14 @@
-import React, { use, useRef } from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import { useLoaderData, Link } from "react-router";
 import { FaArrowLeft } from "react-icons/fa";
 import { AuthContext } from "../../Context/AuthContext/AuthContext";
+import Swal from 'sweetalert2'
 
 const ProductDetails = () => {
     const { user } = use(AuthContext)
     const product = useLoaderData();
     const bidModalRef = useRef(null);
+    const [bids, setBids] = useState([]);
 
     const {
         _id,
@@ -27,6 +29,18 @@ const ProductDetails = () => {
         seller_contact,
     } = product;
 
+
+    useEffect(() => {
+        fetch(`http://localhost:5025/bids/productby/${_id}`)
+            .then((res) => res.json())
+            .then((data) => {
+                setBids(data);
+            }
+            )
+            .catch((error) => console.log(error.message))
+    }, [_id])
+
+
     const handleBidModalOpen = () => {
         bidModalRef.current.showModal();
     }
@@ -43,7 +57,29 @@ const ProductDetails = () => {
             email,
             price
         }
-        console.log(newBid);
+        fetch('http://localhost:5025/bids', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newBid)
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                bidModalRef.current.close();
+                if (data.insertedId) {
+                    Swal.fire({
+                        title: "Your Bid has Been successfully Placed!!",
+                        icon: "success",
+                        draggable: true
+                    })
+                    // addding newBid to the state 
+                    newBid._id = data.insertedId;
+                    const newBids = [...bids, newBid].sort((a, b) => a.price - b.price);
+                    setBids(newBids);
+                }
+            })
+            .catch((error) => console.log(error))
     }
 
     return (
@@ -159,8 +195,73 @@ const ProductDetails = () => {
             </section>
             {/* bid section */}
             <section className="p-2 lg:p-10">
-                <h1 className="text-5xl font-semibold">Bids For the Product
+                <h1 className="text-5xl font-bold">Bids For the Product : <span className="text-primary">
+                    {bids.length}
+                </span>
                 </h1>
+                <div className="overflow-x-auto">
+                    <table className="table">
+                        {/* head */}
+                        <thead>
+                            <tr>
+                                <th>
+                                    SL No.
+                                </th>
+                                <th>Buyer</th>
+                                <th>Product</th>
+                                <th>Bid Price</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                bids.map((bid, index) => {
+                                    return <tr key={bid._id}>
+                                        <th>
+                                            {
+                                                index + 1
+                                            }
+                                        </th>
+                                        <td>
+                                            <div className="flex items-center gap-3">
+                                                <div className="avatar">
+                                                    <div className="mask mask-squircle h-12 w-12">
+                                                        <img
+                                                            src="https://img.daisyui.com/images/profile/demo/2@94.webp"
+                                                            alt="Avatar Tailwind CSS Component" />
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div className="font-bold">
+                                                        {
+                                                            bid.name
+                                                        }
+                                                    </div>
+                                                    <div className="text-sm opacity-50">Bangladesh</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            Zemlak, Daniel and Leannon
+                                            <br />
+                                            <span className="badge badge-ghost badge-sm">Desktop Support Technician</span>
+                                        </td>
+                                        <td className="font-semibold">
+                                            $ {
+                                                bid.price
+                                            }
+                                        </td>
+                                        <th>
+                                            <button className="btn btn-ghost btn-xs">
+
+                                            </button>
+                                        </th>
+                                    </tr>
+                                })
+                            }
+                        </tbody>
+                    </table>
+                </div>
                 <dialog
                     ref={bidModalRef}
                     id="my_modal_5"
