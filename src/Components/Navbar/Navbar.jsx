@@ -1,11 +1,22 @@
-import React from 'react';
+import React, { use } from 'react';
 import { NavLink, useNavigate } from 'react-router';
-import { FaSignInAlt } from 'react-icons/fa';
+import { FaSignInAlt, FaSignOutAlt } from 'react-icons/fa';
+import { AuthContext } from '../../Context/AuthContext/AuthContext';
 
-const Navbar = ({ user }) => {
+const Navbar = () => {
+    const { user, logOut } = use(AuthContext);
     const path = useNavigate();
     const handleLoginButtonClick = () => {
         path('/login');
+    }
+    const handleSingOutButtonClick = () => {
+        logOut()
+            .then(() => {
+                console.log('SignOut SuccessFull');
+            })
+            .catch((error) => {
+                console.log(error.message);
+            })
     }
     const links = (
         <div className='text-base font-semibold flex flex-cols lg:flex-row gap-6'>
@@ -39,17 +50,26 @@ const Navbar = ({ user }) => {
                 </ul>
             </div>
 
-            <div className="navbar-end">
-                {user ? (
-                    <div className="w-10 h-10 rounded-full overflow-hidden border">
-                        <img src={user.photoURL} alt="User" />
+            <div className="navbar-end flex gap-2 lg:px-4">
+                {
+                    user && <div className='tooltip tooltip-bottom'
+                        data-tip={user.displayName || 'User'}>
+                        <div className="w-10 h-10 rounded-full overflow-hidden border">
+                            <img
+                                src={user.photoURL}
+                                alt="User" />
+                        </div>
                     </div>
-                ) : (
-                    <button className="btn btn-primary flex items-center gap-2"
-                        onClick={handleLoginButtonClick}>
-                        <FaSignInAlt /> Login
-                    </button>
-                )}
+                }
+                {
+                    user ? <button
+                        onClick={handleSingOutButtonClick}
+                        className='btn btn-error flex items-center gap-2'><FaSignOutAlt></FaSignOutAlt> LogOut</button> :
+                        <button className="btn btn-primary flex items-center gap-2"
+                            onClick={handleLoginButtonClick}>
+                            <FaSignInAlt /> Login
+                        </button>
+                }
             </div>
         </div>
     );

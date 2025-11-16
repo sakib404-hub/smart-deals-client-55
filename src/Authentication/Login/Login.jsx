@@ -1,9 +1,24 @@
-import React from "react";
+import React, { use } from "react";
 import { Link } from "react-router";
 import { FcGoogle } from "react-icons/fc";
 import { AiOutlineMail, AiOutlineLock } from "react-icons/ai";
+import { AuthContext } from "../../Context/AuthContext/AuthContext";
 
 const Login = () => {
+    const { singInUser } = use(AuthContext);
+    const handleloginFormSubmission = (event) => {
+        event.preventDefault();
+        const email = event.target.email.value;
+        const password = event.target.password.value;
+        singInUser(email, password)
+            .then((result) => {
+                console.log(result.user)
+                event.target.reset();
+            })
+            .catch((error) => {
+                console.log(error.message)
+            })
+    }
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
             <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg border border-gray-200">
@@ -15,7 +30,9 @@ const Login = () => {
                     </Link>
                 </p>
 
-                <form className="space-y-4">
+                <form
+                    onSubmit={handleloginFormSubmission}
+                    className="space-y-4">
                     <div className="form-control">
                         <label
                             htmlFor="email"
@@ -27,6 +44,7 @@ const Login = () => {
                             <input
                                 type="email"
                                 name="email"
+                                autoComplete="current-name"
                                 id="email"
                                 placeholder="smsowkothasan@gmail.com"
                                 className="input input-bordered w-full pl-10"
@@ -45,6 +63,7 @@ const Login = () => {
                             <input
                                 type="password"
                                 name="password"
+                                autoComplete="current-password"
                                 id="password"
                                 placeholder="***********"
                                 className="input input-bordered w-full pl-10"
