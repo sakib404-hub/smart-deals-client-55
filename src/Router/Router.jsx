@@ -10,6 +10,7 @@ import AllProducts from "../Components/AllProducts/AllProducts";
 import MyBids from "../Components/MyBids/MyBids";
 import CreateProducts from "../Components/Createproducts/CreateProducts";
 import Loader from "../Components/Loader/Loader";
+import ProductDetails from "../Components/ProductDetails/ProductDetails";
 
 export const router = createBrowserRouter([
     {
@@ -19,7 +20,9 @@ export const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                Component: Home
+                Component: Home,
+                loader: () => fetch('http://localhost:5025/latest-products'),
+                hydrateFallbackElement: <Loader></Loader>
             },
             {
                 path: '/login',
@@ -33,6 +36,14 @@ export const router = createBrowserRouter([
                 path: '/allproducts',
                 loader: () => fetch('http://localhost:5025/products'),
                 Component: AllProducts,
+                hydrateFallbackElement: <Loader></Loader>
+            },
+            {
+                path: '/productDetails/:id',
+                element: <PrivateRoute>
+                    <ProductDetails></ProductDetails>
+                </PrivateRoute>,
+                loader: ({ params }) => fetch(`http://localhost:5025/products/${params.id}`),
                 hydrateFallbackElement: <Loader></Loader>
             },
             {
