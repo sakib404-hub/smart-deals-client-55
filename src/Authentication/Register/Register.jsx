@@ -1,10 +1,11 @@
-import React, { use } from 'react';
+import React, { use, useState } from 'react';
 import { NavLink } from 'react-router';
 import { FcGoogle } from "react-icons/fc";
 import { AuthContext } from '../../Context/AuthContext/AuthContext';
 
 const Register = () => {
-    const { createUser } = use(AuthContext)
+    const { createUser, googleSignIn } = use(AuthContext)
+    const [error, setError] = useState('');
     const handleRegisterButton = (event) => {
         event.preventDefault();
         console.log('Button is Clicked!');
@@ -23,6 +24,7 @@ const Register = () => {
         createUser(email, password)
             .then((result) => {
                 event.target.reset();
+                setError('');
                 console.log(result);
                 fetch('http://localhost:5025/users', {
                     method: 'POST',
@@ -36,7 +38,31 @@ const Register = () => {
                     .catch((error) => console.log(error));
             })
             .catch((error) => {
-                console.log(error.message);
+                setError(error.message);
+            })
+    }
+
+    const handleSocialLogin = () => {
+        googleSignIn()
+            .then((result) => {
+                const newUser = {
+                    displayName: result.user.displayName,
+                    email: result.user.email,
+                    photoURL: result.user.photoURL
+                }
+                fetch('http://localhost:5025/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'Application/json'
+                    },
+                    body: JSON.stringify(newUser),
+                })
+                    .then((res) => res.json())
+                    .then((data) => console.log(data))
+                    .catch((error) => console.log(error));
+            })
+            .catch((error) => {
+                setError(error.message);
             })
     }
     return (
@@ -113,12 +139,19 @@ const Register = () => {
                         className="btn btn-primary w-full bg-linear-to-r from-purple-500 to-purple-600 border-none text-white">
                         Register
                     </button>
+                    <div className="flex items-center justify-center">
+                        {error && (
+                            <p className="text-red-500 text-sm mt-1">{error}</p>
+                        )}
+                    </div>
                 </form>
                 {/* FORM END */}
 
                 <div className="divider">OR</div>
 
-                <button className="btn w-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 hover:border-gray-400 flex items-center justify-center gap-3 rounded-lg shadow-sm">
+                <button
+                    onClick={handleSocialLogin}
+                    className="btn w-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 hover:border-gray-400 flex items-center justify-center gap-3 rounded-lg shadow-sm">
                     <FcGoogle className="text-2xl" />
                     <span className="font-medium">Sign Up With Google</span>
                 </button>

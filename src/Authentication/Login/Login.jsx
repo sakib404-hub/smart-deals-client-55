@@ -5,7 +5,7 @@ import { AiOutlineMail, AiOutlineLock } from "react-icons/ai";
 import { AuthContext } from "../../Context/AuthContext/AuthContext";
 
 const Login = () => {
-    const { singInUser } = use(AuthContext);
+    const { singInUser, googleSignIn } = use(AuthContext);
     const [error, setError] = useState('');
 
     const handleloginFormSubmission = (event) => {
@@ -17,6 +17,29 @@ const Login = () => {
                 setError('');
                 console.log(result.user)
                 event.target.reset();
+            })
+            .catch((error) => {
+                setError(error.message);
+            })
+    }
+    const handleSocialLogin = () => {
+        googleSignIn()
+            .then((result) => {
+                const newUser = {
+                    displayName: result.user.displayName,
+                    email: result.user.email,
+                    photoURL: result.user.photoURL
+                }
+                fetch('http://localhost:5025/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'Application/json'
+                    },
+                    body: JSON.stringify(newUser),
+                })
+                    .then((res) => res.json())
+                    .then((data) => console.log(data))
+                    .catch((error) => console.log(error));
             })
             .catch((error) => {
                 setError(error.message);
@@ -100,7 +123,9 @@ const Login = () => {
                     <div className="flex-1 h-px bg-gray-300"></div>
                 </div>
 
-                <button className="btn w-full border-gray-300 bg-white hover:bg-gray-50 flex items-center gap-2">
+                <button
+                    onClick={handleSocialLogin}
+                    className="btn w-full border-gray-300 bg-white hover:bg-gray-50 flex items-center gap-2">
                     <FcGoogle size={20} /> Sign In With Google
                 </button>
             </div>
