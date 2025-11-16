@@ -1,4 +1,4 @@
-import React, { use } from "react";
+import React, { use, useState } from "react";
 import { Link } from "react-router";
 import { FcGoogle } from "react-icons/fc";
 import { AiOutlineMail, AiOutlineLock } from "react-icons/ai";
@@ -6,17 +6,20 @@ import { AuthContext } from "../../Context/AuthContext/AuthContext";
 
 const Login = () => {
     const { singInUser } = use(AuthContext);
+    const [error, setError] = useState('');
+
     const handleloginFormSubmission = (event) => {
         event.preventDefault();
         const email = event.target.email.value;
         const password = event.target.password.value;
         singInUser(email, password)
             .then((result) => {
+                setError('');
                 console.log(result.user)
                 event.target.reset();
             })
             .catch((error) => {
-                console.log(error.message)
+                setError(error.message);
             })
     }
     return (
@@ -83,6 +86,12 @@ const Login = () => {
                     >
                         Sign In
                     </button>
+                    <div className="flex items-center justify-center">
+                        {error && (
+                            <p className="text-red-500 text-sm mt-1">{error}</p>
+                        )}
+                    </div>
+
                 </form>
 
                 <div className="flex items-center my-6">

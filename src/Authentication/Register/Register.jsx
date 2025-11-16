@@ -22,7 +22,18 @@ const Register = () => {
         console.log(newUser);
         createUser(email, password)
             .then((result) => {
-                console.log(result)
+                event.target.reset();
+                console.log(result);
+                fetch('http://localhost:5025/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'Application/json'
+                    },
+                    body: JSON.stringify(newUser),
+                })
+                    .then((res) => res.json())
+                    .then((data) => console.log(data))
+                    .catch((error) => console.log(error));
             })
             .catch((error) => {
                 console.log(error.message);
