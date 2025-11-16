@@ -1,5 +1,5 @@
 import React, { use, useState } from "react";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { FcGoogle } from "react-icons/fc";
 import { AiOutlineMail, AiOutlineLock } from "react-icons/ai";
 import { AuthContext } from "../../Context/AuthContext/AuthContext";
@@ -7,6 +7,8 @@ import { AuthContext } from "../../Context/AuthContext/AuthContext";
 const Login = () => {
     const { singInUser, googleSignIn } = use(AuthContext);
     const [error, setError] = useState('');
+    const location = useLocation();
+    const path = useNavigate();
 
     const handleloginFormSubmission = (event) => {
         event.preventDefault();
@@ -17,6 +19,7 @@ const Login = () => {
                 setError('');
                 console.log(result.user)
                 event.target.reset();
+                path(location.state || '/');
             })
             .catch((error) => {
                 setError(error.message);
@@ -40,6 +43,7 @@ const Login = () => {
                     .then((res) => res.json())
                     .then((data) => console.log(data))
                     .catch((error) => console.log(error));
+                path(location.state || '/');
             })
             .catch((error) => {
                 setError(error.message);

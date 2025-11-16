@@ -1,9 +1,10 @@
 import React from 'react';
+import SmartDealsBanner from '../../Components/Banner/Banner';
 
 const Home = () => {
     return (
         <div>
-            This is the Home of the All!
+            <SmartDealsBanner></SmartDealsBanner>
         </div>
     );
 };

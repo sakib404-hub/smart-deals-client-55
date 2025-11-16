@@ -1,11 +1,14 @@
 import React, { use, useState } from 'react';
-import { NavLink } from 'react-router';
+import { NavLink, useLocation, useNavigate } from 'react-router';
 import { FcGoogle } from "react-icons/fc";
 import { AuthContext } from '../../Context/AuthContext/AuthContext';
 
 const Register = () => {
     const { createUser, googleSignIn } = use(AuthContext)
     const [error, setError] = useState('');
+    const location = useLocation();
+    const path = useNavigate();
+
     const handleRegisterButton = (event) => {
         event.preventDefault();
         console.log('Button is Clicked!');
@@ -36,6 +39,7 @@ const Register = () => {
                     .then((res) => res.json())
                     .then((data) => console.log(data))
                     .catch((error) => console.log(error));
+                path(location.state || '/');
             })
             .catch((error) => {
                 setError(error.message);
@@ -60,6 +64,7 @@ const Register = () => {
                     .then((res) => res.json())
                     .then((data) => console.log(data))
                     .catch((error) => console.log(error));
+                path(location.state || '/');
             })
             .catch((error) => {
                 setError(error.message);
