@@ -17,7 +17,7 @@ const MyBids = () => {
                 .then((data) => setMybids(data))
                 .catch((error) => console.log(error.message))
         }
-    }, [user.email])
+    }, [user])
 
     const handleRemovebid = (id) => {
         console.log('button Clicked!', id);

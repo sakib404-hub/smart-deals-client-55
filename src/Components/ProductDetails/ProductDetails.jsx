@@ -10,6 +10,13 @@ const ProductDetails = () => {
     const bidModalRef = useRef(null);
     const [bids, setBids] = useState([]);
 
+    // useEffect(() => {
+    //     axios.get(`http://localhost:5025/bids/productby/${_id}`)
+    //         .then((data) => setProduct(data.data))
+    //         .catch((error) => console.log(error))
+
+    // }, [_id])
+
     const {
         _id,
         title,
