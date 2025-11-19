@@ -1,11 +1,15 @@
 import React, { use } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import { data, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { AuthContext } from "../../Context/AuthContext/AuthContext";
-import axios from "axios";
+import Swal from "sweetalert2";
+import useAxios from "../../Hooks/useAxios";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
 
 const CreateProducts = () => {
     const { user } = use(AuthContext);
+    const axiosInstance = useAxios();
+    const axiosSecure = useAxiosSecure();
 
     const path = useNavigate();
     const handleBackButton = () => {
@@ -47,8 +51,46 @@ const CreateProducts = () => {
         //     .then((res) => res.json())
         //     .then((data) => console.log(data))
         //     .catch((error) => console.log(error));
-        axios.post('http://localhost:5025/products', newProduct)
-            .then((data) => console.log(data))
+
+
+        // axios.post('http://localhost:5025/products', newProduct)
+        //     .then((data) => {
+        //         if (data.data.insertedId) {
+        //             event.target.reset();
+        //             Swal.fire({
+        //                 title: "Your product has Been SuccessFully Added!",
+        //                 text: "Your file has been deleted.",
+        //                 icon: "success"
+        //             });
+        //         }
+        //     })
+        //     .catch((error) => console.log(error))
+
+        // axiosInstance.post('/products', newProduct)
+        //     .then((data) => {
+        //         if (data.data.insertedId) {
+        //             event.target.reset();
+        //             Swal.fire({
+        //                 title: "Your product has Been SuccessFully Added!",
+        //                 text: "Your file has been deleted.",
+        //                 icon: "success"
+        //             });
+        //         }
+        //     })
+        //     .catch((error) => console.log(error));
+
+        axiosSecure.post(`/products`, newProduct)
+            .then((res) => {
+                console.log(res.data)
+                if (res.data.insertedId) {
+                    event.target.reset();
+                    Swal.fire({
+                        title: "Your product has Been SuccessFully Added!",
+                        text: "Your file has been deleted.",
+                        icon: "success"
+                    });
+                }
+            })
             .catch((error) => console.log(error))
     };
 
@@ -66,7 +108,7 @@ const CreateProducts = () => {
             </div>
 
             {/* Page Title */}
-            <h1 className="text-4xl font-bold text-center mb-10">
+            <h1 cla ssName="text-4xl font-bold text-center mb-10">
                 Create <span className="text-purple-600">A Product</span>
             </h1>
 
