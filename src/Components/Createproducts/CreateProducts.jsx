@@ -3,12 +3,10 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router";
 import { AuthContext } from "../../Context/AuthContext/AuthContext";
 import Swal from "sweetalert2";
-import useAxios from "../../Hooks/useAxios";
 import useAxiosSecure from "../../Hooks/useAxiosSecure";
 
 const CreateProducts = () => {
     const { user } = use(AuthContext);
-    const axiosInstance = useAxios();
     const axiosSecure = useAxiosSecure();
 
     const path = useNavigate();
